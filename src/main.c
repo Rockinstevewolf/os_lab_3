@@ -1,18 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <malloc.h>
+#include <unistd.h> 
+#include <pthread.h>
+
+#define ERROR_CREATE_THREAD -11
+#define ERROR_JOIN_THREAD   -12
+#define SUCCESS        0
+
+typedef struct thread_data{
+    char **line;
+    int start;
+    int end;
+} thread_data;
+
 
 // Функция сортировки нисходящим слиянием
-/*void merge(char *a, char *a1, char *a2){
-
-}
-void sort(char *line, int len){
-    int sz = len, hs = sz >> 1;
-    if(sz < 2)
+void mergeSort(char **a, int start, int end){
+    if(end - start < 2)
         return;
-    char *l = new
-}*/
+    if(end - start == 2){
+        char *temp;
+        if(strcmp(a[start], a[start+1]) > 0){
+            temp = a[start];
+            a[start] = a[start+1];
+            a[start+1] = temp;
+        }
+        return;
+    }
+    mergeSort(a, start, start + (end-start)/2);
+    mergeSort(a, start + (end-start)/2, end);
+    char **b = (char**) malloc((end - start) * sizeof(char*));
+    int b1 = start, e1 = start + (end-start)/2, b2 = e1;
+    for(int i = 0; i < (end - start); i++){
+        b[i] = (char*) malloc(200 * sizeof(char));
+        if(b1 >= e1 || (b2 < end && (strcmp(a[b1],a[b2]) > 0 || strcmp(a[b1],a[b2]) == 0))){
+            b[i] = a[b2];
+            b2++;
+        }
+        else{
+            b[i] = a[b1];
+            b1++;
+        }
+    }
+    for(int i = start; i < end; ++i){
+        a[i] = b[i - start];
+    }
+}
+
+void* helloWorld(void *args) {
+    printf("Hello from thread!\n");
+    return SUCCESS;
+}
+
 
 
 int main(int argc, char *argv[]){
@@ -33,45 +73,40 @@ int main(int argc, char *argv[]){
     }
     else{
         printf("Error: you must give only 1 file!\n");
+        return 0;
     }
+    pthread_t thread;
     int i, j;
     int n;
     fscanf(datafile, "%d\n", &n);
     printf("\n");
     char **line = (char**) malloc(n * sizeof(char*));
-    char *temp = (char*) malloc(200 * sizeof(char));
     for(i = 0; i < n; i++){
         line[i] = (char*) malloc(200 * sizeof(char));
         fgets(line[i], 200, datafile);
-        printf("%s", line[i]);
+        printf("%d) %s", i, line[i]);
         if(feof(datafile)){break;}
     }
-    //char line[n][200], temp[200];
-    //int line_index = 0;
-    /*for(i = 0; i < n; i++){
-        fgets(line[i], 200, datafile);
-        printf("%s", line[i]);
-        if(feof(datafile)){break;}
-    }*/
-    //sort(line, n);
+    /////////////////////////////////////////////////////
+
+    /*thread_data data;
+    int status, status_addr;
+    
+    status = pthread_create(&thread, NULL, helloWorld, NULL);
+    if (status != 0) {
+        printf("main error: can't create thread, status = %d\n", status);
+        exit(ERROR_CREATE_THREAD);
+    } printf("Hello from main!\n");*/
+
+
+
+    mergeSort(line, 0, 10);
     printf("\n\n");
-    for(i=0; i < n-1 ; i++){
-        for(j=i+1; j< n; j++)
-        {
-            if(strcmp(line[i],line[j]) > 0)
-            {
-                strcpy(temp,line[i]);
-                strcpy(line[i],line[j]);
-                strcpy(line[j],temp);
-            }
-        }
-    }
     for (i = 0; i < n; i++){
-        printf("%s", line[i]);
+        printf("%d) %s", i, line[i]);
     }
     for(i = 0; i < n; i++){
         free(line[i]);
     }
     free(line);
-    free(temp);
 }
