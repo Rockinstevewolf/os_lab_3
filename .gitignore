@@ -13,3 +13,4 @@ executable
 *.out
 *.a
 *.so
+cmakelists.txt
