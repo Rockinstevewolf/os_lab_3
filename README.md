@@ -1,4 +1,4 @@
-# OS_lab_2
+# OS_lab_3
 ## Variant 03: Merge sort, which is working in threads.
 ### (RUS) Сортировка слиянием, работающая в потоках.
 in bash:
